@@ -80,3 +80,20 @@ docker run --rm -p 8000:8000 \
   -v chatbot-data:/data jibb-chatbot
 # http://localhost:8000
 ```
+
+## 6. Embed the chat widget on a website
+
+Add one tag to any page, just before `</body>` (on a Next.js site, put it in the root layout):
+
+```html
+<script src="https://chat.example.com/widget.js" defer></script>
+```
+
+Replace `chat.example.com` with the domain set in step 1.4. The widget reads its API address
+from its own `src`, so nothing else needs configuring. It renders in a Shadow DOM, so site CSS
+can't affect it, and it follows the site's dark mode (`class="dark"` on `<html>`).
+
+Optional attributes: `data-lang="ja"` (Japanese UI; also detected from `<html lang>` or a `/ja/`
+path), `data-position="left"`, `data-open="true"`.
+
+To try it, open `https://chat.example.com/widget-demo`.

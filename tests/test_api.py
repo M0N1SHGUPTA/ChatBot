@@ -89,3 +89,23 @@ def test_document_lifecycle(client, retrieval):
 
 def test_demo_page(client):
     assert client.get("/").status_code == 200
+
+
+def test_widget_script_served_cross_origin(client):
+    r = client.get("/widget.js", headers={"Origin": "https://npo-jibb.org"})
+    assert r.status_code == 200
+    assert r.headers["content-type"].startswith("application/javascript")
+    assert r.headers["access-control-allow-origin"] in ("*", "https://npo-jibb.org")
+    assert "/api/chat/stream" in r.text and "attachShadow" in r.text
+
+
+def test_widget_demo_page_embeds_script(client):
+    r = client.get("/widget-demo")
+    assert r.status_code == 200 and "/widget.js" in r.text
+
+
+def test_chat_stream_allows_cross_origin(client):
+    r = client.post("/api/chat/stream", json={"message": "hi", "session_id": "w_x"},
+                    headers={"Origin": "https://npo-jibb.org"})
+    assert r.status_code == 200
+    assert r.headers.get("access-control-allow-origin") in ("*", "https://npo-jibb.org")
