@@ -1,0 +1,32 @@
+# Coolify: create the resource with the "Docker Compose" build pack and point it at this file.
+# Coolify shows every ${VAR} below in its Environment Variables tab; ${VAR:?} ones are required.
+# No ports are published: Coolify's proxy routes the domain to the container's port 8000.
+# Local test without Coolify: see DEPLOY.md (docker build + docker run -p 8000:8000).
+
+services:
+  chatbot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      # Coolify: generates a domain for this service and routes it to port 8000.
+      # You can change the domain in the service settings.
+      - SERVICE_FQDN_CHATBOT_8000
+      - GROQ_API_KEY=${GROQ_API_KEY:?}
+      - ADMIN_API_KEY=${ADMIN_API_KEY:-admin_secret_key_123}
+      - LLM_MODEL=${LLM_MODEL:-openai/gpt-oss-20b}
+      - TOP_K=${TOP_K:-5}
+      - LEAD_TRIGGER_TURN=${LEAD_TRIGGER_TURN:-2}
+      # LangSmith tracing (off unless you set it)
+      - LANGCHAIN_TRACING_V2=${LANGCHAIN_TRACING_V2:-false}
+      - LANGCHAIN_API_KEY=${LANGCHAIN_API_KEY:-}
+      - LANGCHAIN_PROJECT=${LANGCHAIN_PROJECT:-groq_chatbot}
+    ports:
+      - "8000:8000"
+    volumes:
+      # Vector index, leads DB and uploaded documents survive redeploys
+      - chatbot-data:/data
+
+volumes:
+  chatbot-data:

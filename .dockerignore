@@ -1,0 +1,42 @@
+# Keep the build context small and secrets out of the image.
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Local environments and caches (env/ alone is several GB)
+env/
+venv/
+.venv/
+__pycache__/
+**/__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+
+# Local runtime data: the container builds its own in /data
+chroma_db/
+test_chroma/
+*.db
+*.sqlite
+*.sqlite3
+leads.json
+
+# Not needed at runtime
+.git/
+.gitignore
+.vscode/
+.idea/
+tests/
+evals/
+pytest.ini
+docker-compose.yml
+*.md
+!knowledge/**/*.md
+*.log
+tmp/
+temp/
+.DS_Store

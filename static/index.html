@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document Intelligence & Conversational RAG Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-gradient: radial-gradient(circle at 15% 15%, #181d29 0%, #0d1017 100%);
+      --surface: rgba(26, 31, 46, 0.7);
+      --surface-border: rgba(255, 255, 255, 0.08);
+      --accent: #6366f1;
+      --accent-hover: #4f46e5;
+      --accent-glow: rgba(99, 102, 241, 0.25);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --success: #10b981;
+      --danger: #ef4444;
+      --danger-bg: rgba(239, 68, 68, 0.15);
+      --card-radius: 16px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg-gradient);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    header {
+      padding: 18px 36px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--surface-border);
+      backdrop-filter: blur(12px);
+      background: rgba(13, 16, 23, 0.75);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-badge {
+      background: linear-gradient(135deg, #6366f1, #a855f7);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .header-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-left: 20px;
+      transition: color 0.2s;
+    }
+    .header-links a:hover { color: var(--text-main); }
+
+    /* Main Container */
+    main {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 28px;
+      padding: 32px 36px;
+      max-width: 1600px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    @media (max-width: 1024px) {
+      main { grid-template-columns: 1fr; }
+    }
+
+    /* Cards */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--card-radius);
+      padding: 24px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-subtitle {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    /* Admin Controls */
+    .auth-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    input, button, select {
+      font-family: inherit;
+      font-size: 0.9rem;
+      border-radius: 8px;
+      outline: none;
+    }
+
+    input[type="text"], input[type="password"] {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--surface-border);
+      color: var(--text-main);
+      padding: 10px 14px;
+      flex: 1;
+      transition: border-color 0.2s;
+    }
+    input:focus { border-color: var(--accent); }
+
+    .btn {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn:hover { background: var(--accent-hover); box-shadow: 0 0 16px var(--accent-glow); }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--surface-border);
+      color: var(--text-muted);
+    }
+    .btn-outline:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+      box-shadow: none;
+    }
+
+    /* Drop Zone */
+    .dropzone {
+      border: 2px dashed rgba(99, 102, 241, 0.4);
+      background: rgba(99, 102, 241, 0.03);
+      border-radius: 12px;
+      padding: 32px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 20px;
+    }
+    .dropzone:hover, .dropzone.dragover {
+      border-color: var(--accent);
+      background: rgba(99, 102, 241, 0.08);
+    }
+    .dropzone-icon { font-size: 2rem; margin-bottom: 8px; display: block; }
+
+    /* Documents Table */
+    .table-container {
+      flex: 1;
+      overflow-y: auto;
+      max-height: 380px;
+      border-radius: 8px;
+      border: 1px solid var(--surface-border);
+      margin-top: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      text-align: left;
+    }
+    th, td { padding: 12px 16px; border-bottom: 1px solid var(--surface-border); }
+    th {
+      background: rgba(15, 23, 42, 0.8);
+      color: var(--text-muted);
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+    }
+    tr:hover td { background: rgba(255, 255, 255, 0.02); }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .badge-chunks { background: rgba(99, 102, 241, 0.2); color: #818cf8; }
+
+    .btn-delete {
+      background: var(--danger-bg);
+      color: var(--danger);
+      border: none;
+      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+    .btn-delete:hover { background: rgba(239, 68, 68, 0.3); }
+
+    /* Chat Widget Simulator */
+    .chat-card {
+      display: flex;
+      flex-direction: column;
+      height: 720px;
+    }
+
+    .chat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--surface-border);
+      margin-bottom: 14px;
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding-right: 6px;
+    }
+
+    .msg {
+      max-width: 85%;
+      padding: 12px 16px;
+      border-radius: 14px;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .msg-user {
+      align-self: flex-end;
+      background: var(--accent);
+      color: white;
+      border-bottom-right-radius: 2px;
+    }
+
+    .msg-bot {
+      align-self: flex-start;
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid var(--surface-border);
+      color: #e2e8f0;
+      border-bottom-left-radius: 2px;
+    }
+
+    .msg-sources {
+      margin-top: 8px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      border-top: 1px dashed rgba(255, 255, 255, 0.1);
+      padding-top: 6px;
+    }
+
+    .chat-input-bar {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    /* Lead Capture Card */
+    .lead-card {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.95));
+      border: 1px solid rgba(99, 102, 241, 0.4);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+      border-radius: 14px;
+      padding: 18px 20px;
+      margin: 12px 0;
+      max-width: 90%;
+      align-self: flex-start;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    .lead-card h4 {
+      font-size: 0.95rem;
+      color: #fff;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .lead-card p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+    .services-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 12px;
+      max-height: 140px;
+      overflow-y: auto;
+    }
+    .service-pill {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #cbd5e1;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .service-pill:hover {
+      border-color: var(--accent);
+      color: #fff;
+    }
+    .service-pill.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+      font-weight: 600;
+    }
+    .lead-inputs {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .lead-inputs input {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 0.85rem;
+      color: #fff;
+      outline: none;
+    }
+    .lead-inputs input:focus {
+      border-color: var(--accent);
+    }
+    .lead-submit-btn {
+      width: 100%;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 9px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .lead-submit-btn:hover {
+      background: var(--accent-hover);
+    }
+    .lead-success-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid var(--success);
+      color: #34d399;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+
+    .status-toast {
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      margin-bottom: 12px;
+      display: none;
+    }
+    .status-toast.success { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+    .status-toast.error { background: var(--danger-bg); color: var(--danger); }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <span>🤖 DocuChat Intelligence</span>
+      <span class="brand-badge">FastAPI + Groq</span>
+    </div>
+    <div class="header-links">
+      <a href="/docs" target="_blank">📖 Swagger Docs</a>
+      <a href="/api/health" target="_blank">🩺 Health</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- LEFT: Admin Document Manager -->
+    <section class="card">
+      <div class="card-title">🗄️ Admin Document Manager</div>
+      <div class="card-subtitle">Upload PDFs, DOCXs, or TXTs. They will be chunked, embedded, and indexed into ChromaDB instantly.</div>
+
+      <div class="auth-bar">
+        <input type="text" id="adminKey" placeholder="Enter X-Admin-API-Key" value="admin_secret_key_123" autocomplete="off" spellcheck="false">
+        <button class="btn btn-outline" onclick="loadDocuments()">🔄 Refresh List</button>
+      </div>
+
+      <div id="adminToast" class="status-toast"></div>
+
+      <!-- Drag & Drop Area -->
+      <div class="dropzone" id="dropzone" onclick="document.getElementById('fileInput').click()">
+        <span class="dropzone-icon">📁</span>
+        <strong>Click to select or drag & drop documents</strong>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">Supports .pdf, .docx, .txt, .md</p>
+        <input type="file" id="fileInput" multiple style="display: none;" onchange="handleFileSelect(event)">
+      </div>
+
+      <!-- Document Table -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+        <strong style="font-size: 0.95rem;">Indexed Files in Knowledge Base</strong>
+        <button class="btn btn-outline" style="padding: 6px 12px; font-size: 0.8rem;" onclick="reindexAll()">🧹 Re-index All</button>
+      </div>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Filename</th>
+              <th>Format</th>
+              <th>Size</th>
+              <th>Chunks in DB</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="docsTableBody">
+            <tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Loading files...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- RIGHT: Embeddable Website Widget Simulator -->
+    <section class="card chat-card">
+      <div class="chat-header">
+        <div>
+          <div class="card-title">💬 Site Chat Widget Simulator</div>
+          <div style="font-size: 0.8rem; color: var(--text-muted);">Simulates your visitor chat experience with streaming tokens & memory</div>
+        </div>
+        <button class="btn btn-outline" style="padding: 6px 12px; font-size: 0.8rem;" onclick="clearChat()">🗑️ Clear</button>
+      </div>
+
+      <div class="chat-messages" id="chatMessages">
+        <div class="msg msg-bot">
+          👋 Hello! I am your AI assistant grounded in your uploaded documents. Ask me anything!
+        </div>
+      </div>
+
+      <div class="chat-input-bar">
+        <input type="text" id="userInput" placeholder="Ask about your documents (e.g. What is RAG?)..." onkeydown="if(event.key==='Enter') sendStreamMessage()">
+        <button class="btn" onclick="sendStreamMessage()">Send 🚀</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const API_BASE = "";
+    let sessionId = "visitor_demo_" + Math.random().toString(36).substring(7);
+    let hasSubmittedLead = false;
+    let selectedLeadService = "Market Landscaping";
+
+    function getAdminKey() {
+      return document.getElementById("adminKey").value.trim();
+    }
+
+    function showToast(elemId, msg, isError = false) {
+      const toast = document.getElementById(elemId);
+      toast.className = `status-toast ${isError ? 'error' : 'success'}`;
+      toast.textContent = msg;
+      toast.style.display = "block";
+      setTimeout(() => { toast.style.display = "none"; }, 4000);
+    }
+
+    // --- Admin: List Documents ---
+    async function loadDocuments() {
+      const tbody = document.getElementById("docsTableBody");
+      try {
+        const res = await fetch(`${API_BASE}/api/admin/documents`, {
+          headers: { "X-Admin-API-Key": getAdminKey() }
+        });
+        if (res.status === 401) {
+          tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--danger); padding: 20px;">🔒 <strong>Unauthorized (401)</strong><br><span style="font-size: 0.8rem; color: var(--text-muted);">Ensure the Admin Key above matches <code>ADMIN_API_KEY</code> in <code>.env</code> and click Refresh.</span></td></tr>`;
+          showToast("adminToast", "Unauthorized: Invalid X-Admin-API-Key", true);
+          return;
+        }
+        if (!res.ok) throw new Error(`Server returned status ${res.status}`);
+        const data = await res.json();
+
+        if (!data.documents || data.documents.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 20px;">No documents found in knowledge directory. Upload one above!</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = data.documents.map(doc => `
+          <tr>
+            <td><strong>${doc.filename}</strong></td>
+            <td><span class="badge" style="background: rgba(255,255,255,0.06);">${doc.file_type}</span></td>
+            <td>${(doc.size_bytes / 1024).toFixed(1)} KB</td>
+            <td><span class="badge badge-chunks">${doc.chunks_in_db} chunks</span></td>
+            <td>
+              <button class="btn-delete" onclick="deleteDocument('${doc.filename}')">Delete</button>
+            </td>
+          </tr>
+        `).join("");
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--danger); padding: 20px;">⚠️ <strong>Could not connect to backend</strong><br><span style="font-size: 0.8rem; color: var(--text-muted);">${err.message}. Ensure the server is running with: <code>python main.py --serve</code></span></td></tr>`;
+        showToast("adminToast", err.message, true);
+      }
+    }
+
+    // --- Admin: Upload Documents ---
+    async function handleFileSelect(e) {
+      const files = e.target.files;
+      if (!files.length) return;
+
+      const formData = new FormData();
+      for (let f of files) formData.append("files", f);
+
+      showToast("adminToast", `⏳ Uploading and chunking ${files.length} file(s)...`);
+
+      try {
+        const res = await fetch(`${API_BASE}/api/admin/upload`, {
+          method: "POST",
+          headers: { "X-Admin-API-Key": getAdminKey() },
+          body: formData
+        });
+        const data = await res.json();
+        if (res.ok) {
+          showToast("adminToast", `✅ Indexed ${data.total_chunks_added} chunks successfully!`);
+          loadDocuments();
+        } else {
+          showToast("adminToast", data.detail || "Upload failed", true);
+        }
+      } catch (err) {
+        showToast("adminToast", err.message, true);
+      }
+    }
+
+    // --- Admin: Delete Document ---
+    async function deleteDocument(filename) {
+      if (!confirm(`Are you sure you want to delete ${filename}?`)) return;
+      try {
+        const res = await fetch(`${API_BASE}/api/admin/documents/${encodeURIComponent(filename)}`, {
+          method: "DELETE",
+          headers: { "X-Admin-API-Key": getAdminKey() }
+        });
+        const data = await res.json();
+        if (res.ok) {
+          showToast("adminToast", `🗑️ ${filename} deleted.`);
+          loadDocuments();
+        } else {
+          showToast("adminToast", data.detail || "Delete failed", true);
+        }
+      } catch (err) {
+        showToast("adminToast", err.message, true);
+      }
+    }
+
+    // --- Admin: Reindex ---
+    async function reindexAll() {
+      if (!confirm("This will clear the vector database and re-embed all documents from scratch. Proceed?")) return;
+      showToast("adminToast", "⏳ Re-indexing all documents...");
+      try {
+        const res = await fetch(`${API_BASE}/api/admin/reindex`, {
+          method: "POST",
+          headers: { "X-Admin-API-Key": getAdminKey() }
+        });
+        const data = await res.json();
+        showToast("adminToast", data.message);
+        loadDocuments();
+      } catch (err) {
+        showToast("adminToast", err.message, true);
+      }
+    }
+
+    // --- Widget: Streaming Chat ---
+    async function sendStreamMessage() {
+      const input = document.getElementById("userInput");
+      const text = input.value.trim();
+      if (!text) return;
+
+      input.value = "";
+      const chatContainer = document.getElementById("chatMessages");
+
+      // Append User Message
+      const userDiv = document.createElement("div");
+      userDiv.className = "msg msg-user";
+      userDiv.textContent = text;
+      chatContainer.appendChild(userDiv);
+
+      // Append Empty Bot Message for Streaming
+      const botDiv = document.createElement("div");
+      botDiv.className = "msg msg-bot";
+      botDiv.innerHTML = "<em>Thinking...</em>";
+      chatContainer.appendChild(botDiv);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+
+      let fullAnswer = "";
+
+      try {
+        const response = await fetch(`${API_BASE}/api/chat/stream`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: text, session_id: sessionId })
+        });
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder("utf-8");
+        botDiv.innerHTML = "";
+
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+
+          const chunkText = decoder.decode(value);
+          const lines = chunkText.split("\n");
+
+          for (let line of lines) {
+            if (line.startsWith("data: ")) {
+              try {
+                const payload = JSON.parse(line.substring(6));
+                if (payload.token) {
+                  fullAnswer += payload.token;
+                  botDiv.innerText = fullAnswer;
+                  chatContainer.scrollTop = chatContainer.scrollHeight;
+                }
+                if (payload.done) {
+                  if (payload.sources && payload.sources.length) {
+                    const sourcesDiv = document.createElement("div");
+                    sourcesDiv.className = "msg-sources";
+                    sourcesDiv.innerHTML = `📑 <strong>Sources:</strong> ${payload.sources.join(", ")}`;
+                    botDiv.appendChild(sourcesDiv);
+                  }
+
+                  // Render Lead Capture Card if triggered and not yet submitted
+                  if (payload.trigger_lead_capture && !hasSubmittedLead && !document.getElementById("leadCaptureCard")) {
+                    renderLeadCard(payload.services || []);
+                  }
+                }
+              } catch (e) {}
+            }
+          }
+        }
+      } catch (err) {
+        botDiv.textContent = "❌ Failed to connect to chat API: " + err.message;
+      }
+    }
+
+    // --- Render Lead Capture Card ---
+    function renderLeadCard(services) {
+      const chatContainer = document.getElementById("chatMessages");
+      const card = document.createElement("div");
+      card.id = "leadCaptureCard";
+      card.className = "lead-card";
+
+      const pillsHtml = services.map((s, idx) => `
+        <button type="button" class="service-pill ${idx === 0 ? 'active' : ''}" onclick="selectServicePill(this, '${s.replace(/'/g, "\\'")}')">
+          ${s}
+        </button>
+      `).join("");
+
+      if (services.length > 0) selectedLeadService = services[0];
+
+      card.innerHTML = `
+        <h4>💼 How can JIBB assist your organisation?</h4>
+        <p>Select a service you are interested in and share your contact details. Our bilateral advisory team will reach out directly.</p>
+        <div style="font-size: 0.75rem; color: #cbd5e1; margin-bottom: 6px; font-weight: 500;">Select Service of Interest:</div>
+        <div class="services-pills">${pillsHtml}</div>
+        <div class="lead-inputs">
+          <input type="text" id="leadName" placeholder="Your Full Name *" required />
+          <input type="email" id="leadEmail" placeholder="Work Email Address *" required />
+        </div>
+        <div id="leadError" style="color: #ef4444; font-size: 0.75rem; margin-bottom: 8px; display: none;"></div>
+        <button class="lead-submit-btn" onclick="submitLeadFromWidget()">Submit & Continue Chatting 🚀</button>
+      `;
+
+      chatContainer.appendChild(card);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    function selectServicePill(btn, serviceName) {
+      document.querySelectorAll(".service-pill").forEach(p => p.classList.remove("active"));
+      btn.classList.add("active");
+      selectedLeadService = serviceName;
+    }
+
+    async function submitLeadFromWidget() {
+      const nameInput = document.getElementById("leadName");
+      const emailInput = document.getElementById("leadEmail");
+      const errorDiv = document.getElementById("leadError");
+      const name = nameInput.value.trim();
+      const email = emailInput.value.trim();
+
+      if (!name || !email) {
+        errorDiv.textContent = "Please fill in both your name and email address.";
+        errorDiv.style.display = "block";
+        return;
+      }
+      if (!email.includes("@") || !email.includes(".")) {
+        errorDiv.textContent = "Please provide a valid email address.";
+        errorDiv.style.display = "block";
+        return;
+      }
+
+      errorDiv.style.display = "none";
+      const submitBtn = document.querySelector(".lead-submit-btn");
+      if (submitBtn) submitBtn.textContent = "Submitting...";
+
+      try {
+        const res = await fetch(`${API_BASE}/api/leads`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            session_id: sessionId,
+            name: name,
+            email: email,
+            service: selectedLeadService
+          })
+        });
+
+        if (!res.ok) throw new Error("Failed to submit details.");
+
+        hasSubmittedLead = true;
+        const card = document.getElementById("leadCaptureCard");
+        if (card) {
+          card.innerHTML = `
+            <div class="lead-success-badge">
+              <span>✅</span>
+              <div>
+                <strong>Thank you, ${name}!</strong><br>
+                Your interest in <em>${selectedLeadService}</em> has been recorded. Our bilateral team will reach out to <u>${email}</u> shortly.
+              </div>
+            </div>
+          `;
+        }
+      } catch (err) {
+        errorDiv.textContent = err.message;
+        errorDiv.style.display = "block";
+        if (submitBtn) submitBtn.textContent = "Submit & Continue Chatting 🚀";
+      }
+    }
+
+    // --- Widget: Clear Memory ---
+    async function clearChat() {
+      await fetch(`${API_BASE}/api/chat/clear`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ session_id: sessionId })
+      });
+      document.getElementById("chatMessages").innerHTML = `
+        <div class="msg msg-bot">
+          🧹 Chat memory has been cleared for this session. What would you like to explore next?
+        </div>
+      `;
+    }
+
+    // Initial load
+    loadDocuments();
+  </script>
+</body>
+</html>

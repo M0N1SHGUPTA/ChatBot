@@ -1,0 +1,62 @@
+# --- Python ---------------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+build/
+dist/
+
+# --- Virtual environments -------------------------------------------------------------------
+env/
+venv/
+.venv/
+ENV/
+env.bak/
+venv.bak/
+
+# --- Secrets (never commit) -----------------------------------------------------------------
+.env
+.env.*
+!.env.example
+
+# --- Runtime data created by the app --------------------------------------------------------
+# Vector index (rebuild with `python main.py --ingest`)
+chroma_db/
+test_chroma/
+# Leads and any other local databases
+*.db
+*.sqlite
+*.sqlite3
+leads.json
+
+# --- Evals ----------------------------------------------------------------------------------
+# Local runs; named milestone results (e.g. baseline.json) are committed
+evals/results/*.local.json
+evals/.cache/
+
+# --- Test & tool caches ---------------------------------------------------------------------
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# --- Notebooks ------------------------------------------------------------------------------
+.ipynb_checkpoints/
+
+# --- Editors --------------------------------------------------------------------------------
+# Shared VS Code settings (interpreter path) stay tracked; personal files do not
+.vscode/*
+!.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# --- OS -------------------------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+
+# --- Logs & temp ----------------------------------------------------------------------------
+*.log
+tmp/
+temp/
