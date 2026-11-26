@@ -22,8 +22,8 @@ services:
       - LANGCHAIN_TRACING_V2=${LANGCHAIN_TRACING_V2:-false}
       - LANGCHAIN_API_KEY=${LANGCHAIN_API_KEY:-}
       - LANGCHAIN_PROJECT=${LANGCHAIN_PROJECT:-groq_chatbot}
-    ports:
-      - "8000:8000"
+    expose:
+      - 8000
     volumes:
       # Vector index, leads DB and uploaded documents survive redeploys
       - chatbot-data:/data
