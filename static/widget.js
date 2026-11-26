@@ -46,7 +46,7 @@
       subtitle: "Japan–India Business Bureau",
       greet: "Hello! 👋 I'm the JIBB assistant. Ask me about our services, membership, events, or doing business between Japan and India.",
       placeholder: "Type your question…",
-      open: "Chat with JIBB", close: "Close chat", reset: "Start a new conversation", send: "Send",
+      open: "Chat with JIBB", close: "Close chat", expand: "Larger view", shrink: "Smaller view", reset: "Start a new conversation", send: "Send",
       suggestions: ["What services does JIBB offer?", "How do I become a member?", "Where are your offices?"],
       error: "Sorry, I couldn't reach the server. Please try again in a moment.",
       leadTitle: "Connect with our advisory team",
@@ -65,7 +65,7 @@
       subtitle: "日印ビジネスビューロー",
       greet: "こんにちは！👋 JIBBアシスタントです。サービス、会員制度、イベント、日印ビジネスについてお気軽にご質問ください。",
       placeholder: "ご質問を入力してください…",
-      open: "JIBBにチャットで相談", close: "チャットを閉じる", reset: "新しい会話を始める", send: "送信",
+      open: "JIBBにチャットで相談", close: "チャットを閉じる", expand: "拡大表示", shrink: "縮小表示", reset: "新しい会話を始める", send: "送信",
       suggestions: ["JIBBのサービス内容は？", "会員になるには？", "オフィスの所在地は？"],
       error: "申し訳ありません。サーバーに接続できませんでした。しばらくしてから再度お試しください。",
       leadTitle: "アドバイザーにご相談ください",
@@ -138,7 +138,7 @@
     ".w{--indigo:#243b6b;--indigo-d:#1a2d52;--orange:#e98b2a;--orange-d:#d4893a;--sakura:#d96c6c;",
     "--bg:#f8f7f4;--card:#fff;--fg:#1a1a1a;--muted:#6b7280;--border:#e5e2dc;--bot:#fff;--user:#243b6b;--user-fg:#fff;",
     "--shadow:0 16px 48px rgba(0,0,0,.14),0 8px 20px rgba(0,0,0,.08);",
-    "font-family:Inter,'Noto Sans JP',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:14px;line-height:1.5;color:var(--fg);",
+    "font-family:Inter,'Noto Sans JP',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:15px;line-height:1.6;color:var(--fg);",
     "-webkit-font-smoothing:antialiased}",
     ".w.dark{--indigo:#7b9fe0;--indigo-d:#5a7dc0;--orange:#f0a455;--orange-d:#e98b2a;--bg:#0f1629;--card:#1a2340;--fg:#f0ede8;",
     "--muted:#8b95a8;--border:rgba(255,255,255,.12);--bot:#1a2340;--user:#2e4d8a;--user-fg:#fff;--shadow:0 16px 48px rgba(0,0,0,.5)}",
@@ -160,10 +160,13 @@
     ".w.open .nudge{display:none}",
     ".left .launch{right:auto;left:22px}.left .nudge{right:auto;left:94px}.left .panel{right:auto;left:22px;transform-origin:bottom left}",
     // panel
-    ".panel{position:fixed;bottom:96px;right:22px;z-index:2147483647;width:390px;height:min(640px,calc(100vh - 120px));",
+    ".panel{position:fixed;bottom:96px;right:22px;z-index:2147483647;width:min(440px,calc(100vw - 44px));height:min(720px,calc(100vh - 120px));",
     "background:var(--bg);border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow);display:flex;flex-direction:column;",
     "overflow:hidden;transform-origin:bottom right;transform:scale(.92) translateY(12px);opacity:0;visibility:hidden;",
-    "transition:transform .25s cubic-bezier(.2,.8,.2,1),opacity .2s,visibility 0s .25s}",
+    "transition:transform .25s cubic-bezier(.2,.8,.2,1),opacity .2s,visibility 0s .25s,width .25s,height .25s}",
+    ".w.big .panel{width:min(760px,calc(100vw - 44px));height:calc(100vh - 120px)}",
+    ".w.big .msgs{padding:24px 28px 10px}",
+    ".w.big .b{max-width:78%}",
     ".w.open .panel{transform:none;opacity:1;visibility:visible;transition:transform .25s cubic-bezier(.2,.8,.2,1),opacity .2s}",
     ".head{background:linear-gradient(135deg,#243b6b 0%,#1a2d52 100%);color:#fff;padding:14px 14px 14px 16px;display:flex;align-items:center;gap:12px;position:relative}",
     ".head:after{content:'';position:absolute;left:0;right:0;bottom:0;height:3px;background:linear-gradient(90deg,var(--orange),var(--sakura))}",
@@ -183,12 +186,12 @@
     ".row.user{justify-content:flex-end}",
     ".av{width:26px;height:26px;border-radius:50%;background:var(--indigo);color:#fff;flex:none;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;font-family:'Plus Jakarta Sans',sans-serif}",
     ".w.dark .av{background:#2e4d8a}",
-    ".b{max-width:82%;padding:10px 14px;border-radius:16px;word-wrap:break-word;overflow-wrap:anywhere}",
+    ".b{max-width:86%;padding:11px 15px;border-radius:16px;word-wrap:break-word;overflow-wrap:anywhere}",
     ".bot .b{background:var(--bot);border:1px solid var(--border);border-bottom-left-radius:4px;box-shadow:0 1px 2px rgba(0,0,0,.04)}",
     ".user .b{background:var(--user);color:var(--user-fg);border-bottom-right-radius:4px;white-space:pre-wrap}",
     ".b p{margin:0 0 8px}.b p:last-child{margin-bottom:0}",
-    ".b ul,.b ol{margin:4px 0 8px;padding-left:20px}.b li{margin:2px 0}.b li::marker{color:var(--orange)}",
-    ".b h4{margin:8px 0 4px;font-size:14px;font-family:'Plus Jakarta Sans',sans-serif;color:var(--indigo)}",
+    ".b ul,.b ol{margin:4px 0 8px;padding-left:20px}.b li{margin:4px 0}.b li::marker{color:var(--orange)}",
+    ".b h4{margin:8px 0 4px;font-size:15px;font-family:'Plus Jakarta Sans',sans-serif;color:var(--indigo)}",
     ".b strong{font-weight:650}",
     ".b code{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;background:rgba(36,59,107,.08);padding:1px 5px;border-radius:4px}",
     ".b a{color:var(--indigo);text-decoration:underline;text-underline-offset:2px}",
@@ -200,7 +203,7 @@
     ".dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}",
     // suggestions
     ".sugg{display:flex;flex-wrap:wrap;gap:6px;padding-left:34px}",
-    ".chip{background:var(--card);border:1px solid var(--border);color:var(--indigo);border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:500;transition:all .2s}",
+    ".chip{background:var(--card);border:1px solid var(--border);color:var(--indigo);border-radius:999px;padding:7px 13px;font-size:13.5px;font-weight:500;transition:all .2s}",
     ".chip:hover{border-color:var(--orange);color:var(--orange-d)}",
     // lead card
     ".lead{margin-left:34px;background:var(--card);border:1px solid var(--border);border-top:3px solid var(--orange);border-radius:14px;padding:14px;animation:pop .3s ease both}",
@@ -219,16 +222,16 @@
     ".foot{padding:10px 12px 8px;background:var(--bg);border-top:1px solid var(--border)}",
     ".bar{display:flex;align-items:flex-end;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:6px 6px 6px 14px;transition:border-color .2s,box-shadow .2s}",
     ".bar:focus-within{border-color:var(--indigo);box-shadow:0 0 0 3px rgba(36,59,107,.1)}",
-    "textarea{flex:1;border:0;outline:0;resize:none;background:transparent;color:var(--fg);font:inherit;font-size:14px;line-height:1.45;max-height:110px;padding:6px 0;min-height:22px}",
+    "textarea{flex:1;border:0;outline:0;resize:none;background:transparent;color:var(--fg);font:inherit;font-size:15px;line-height:1.45;max-height:130px;padding:6px 0;min-height:22px}",
     "textarea::placeholder{color:var(--muted)}",
     ".send{width:36px;height:36px;flex:none;border:0;border-radius:10px;background:var(--orange);color:#fff;display:flex;align-items:center;justify-content:center;transition:background .2s,opacity .2s}",
     ".send:hover{background:var(--orange-d)}.send:disabled{opacity:.4;cursor:default}",
     ".send svg{width:18px;height:18px}",
-    ".note{font-size:10.5px;color:var(--muted);text-align:center;margin-top:6px}",
+    ".note{font-size:11px;color:var(--muted);text-align:center;margin-top:6px}",
     "@keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}",
     "@keyframes blink{0%,80%,100%{opacity:.25;transform:translateY(0)}40%{opacity:.9;transform:translateY(-3px)}}",
     "@media (max-width:480px){.panel{right:0!important;left:0!important;bottom:0;width:100%;height:100%;height:100dvh;border-radius:0;border:0}",
-    ".w.open .launch{display:none}.launch{bottom:16px;right:16px}.left .launch{left:16px}.nudge{display:none}}",
+    ".w.open .launch{display:none}.hb.exp{display:none}.launch{bottom:16px;right:16px}.left .launch{left:16px}.nudge{display:none}}",
     "@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}",
   ].join("");
 
@@ -237,6 +240,8 @@
     close: '<svg class="ic-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>',
     x: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>',
     reset: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>',
+    expand: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>',
+    shrink: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14h6v6M20 10h-6V4M14 10l7-7M3 21l7-7"/></svg>',
     send: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
   };
 
@@ -258,6 +263,7 @@
         '<div class="head">' +
           '<div class="logo"><img alt="JIBB" src="https://npo-jibb.org/jibb-logo.svg"></div>' +
           '<div class="ht"><b>' + esc(T.title) + '</b><span>' + esc(T.subtitle) + '</span></div>' +
+          '<button class="hb exp" data-act="expand" title="' + esc(T.expand) + '" aria-label="' + esc(T.expand) + '">' + ICON.expand + '</button>' +
           '<button class="hb" data-act="reset" title="' + esc(T.reset) + '" aria-label="' + esc(T.reset) + '">' + ICON.reset + '</button>' +
           '<button class="hb" data-act="close" title="' + esc(T.close) + '" aria-label="' + esc(T.close) + '">' + ICON.x + '</button>' +
         '</div>' +
@@ -425,6 +431,16 @@
     launch.onclick = function () { setOpen(!w.classList.contains("open")); };
     w.querySelector('[data-act="close"]').onclick = function () { setOpen(false); launch.focus(); };
     w.querySelector('[data-act="reset"]').onclick = resetChat;
+    var expBtn = w.querySelector('[data-act="expand"]');
+    function setBig(on) {
+      w.classList.toggle("big", on);
+      expBtn.innerHTML = on ? ICON.shrink : ICON.expand;
+      expBtn.title = on ? T.shrink : T.expand; expBtn.setAttribute("aria-label", expBtn.title);
+      sset("localStorage", "big", on ? "1" : "0");
+      setTimeout(scroll, 260);
+    }
+    expBtn.onclick = function () { setBig(!w.classList.contains("big")); };
+    if (sget("localStorage", "big") === "1") setBig(true);
     w.addEventListener("keydown", function (e) { if (e.key === "Escape" && w.classList.contains("open")) { setOpen(false); launch.focus(); } });
 
     input.addEventListener("input", function () {
